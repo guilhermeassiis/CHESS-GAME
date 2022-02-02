@@ -16,5 +16,11 @@ namespace ChessGame.board
         {
             return pieces[line, column];
         }
+        public void MakeAPiece(Piece p, Position position)
+        {
+            pieces[position.line, position.column] = p;
+            p.position = position;
+            
+        }
     }
 }
