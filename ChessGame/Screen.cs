@@ -15,7 +15,7 @@ namespace ChessGame
                     }
                     else
                     {
-                        Console.Write(board.ReturnPiece(i, j));
+                        Console.Write(board.ReturnPiece(i, j) + " ");
                     }
                 }
                 Console.WriteLine();

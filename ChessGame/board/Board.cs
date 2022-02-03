@@ -1,3 +1,5 @@
+using ChessGame.board.Exceptions;
+
 namespace ChessGame.board
 {
     public class Board
@@ -16,11 +18,41 @@ namespace ChessGame.board
         {
             return pieces[line, column];
         }
+        // Method Overload ReturnPieces
+        public Piece ReturnPiece(Position position)
+        {
+            return pieces[position.line, position.column];
+        }
+        public bool PieceExist(Position position)
+        {
+            ValidatePosition(position);
+            return ReturnPiece(position) == null;
+        }
         public void MakeAPiece(Piece p, Position position)
         {
+            if (!PieceExist(position))
+            {
+                throw new BoardException("A piece exists in the position");
+            }
             pieces[position.line, position.column] = p;
             p.position = position;
             
+        }
+        public bool ValidPosition(Position position)
+        {
+            if(position.line < 0 || position.line >= lines || position.column < 0 || position.column >= columns)
+            {
+                return false;
+            }
+            return true;
+        }
+        // Created a especiall exception
+        public void ValidatePosition(Position position)
+        {
+            if (!ValidPosition(position))
+            {
+                throw new BoardException("Invalid Position !");
+            }
         }
     }
 }
