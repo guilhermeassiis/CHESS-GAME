@@ -2,7 +2,7 @@ namespace ChessGame.board
 {
     public class Piece
     {
-        public Position? position { get; set; }  
+        public Position position { get; set; }  
         public Colors color { get; protected set; }
         public Board board { get; protected set; }
         public int numberOfMoves { get; protected set; }
@@ -13,6 +13,10 @@ namespace ChessGame.board
             this.color = color;
             this.board = board;
             this.numberOfMoves = 0;
+        }
+        public void IncrementNumberOfMoves()
+        {
+            numberOfMoves++;
         }
     }
 }

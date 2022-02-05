@@ -10,11 +10,21 @@ namespace ChessGame
         {
             try
             {
-               var chessBoard = new Board(8, 8);
-                chessBoard.MakeAPiece(new Tower(Colors.Black, chessBoard), new Position(0, 0));
-                chessBoard.MakeAPiece(new Tower(Colors.White, chessBoard), new Position(1, 3));
-                chessBoard.MakeAPiece(new King(Colors.Black, chessBoard), new Position(2, 4));
-                Screen.PrintBoardLines(chessBoard);
+               ChessMatch chessMatch = new ChessMatch();
+               
+               while (!chessMatch.closed)
+               {
+                    Console.Clear();
+                    Screen.PrintBoardLines(chessMatch.board);
+
+                    Console.WriteLine();
+                    Console.Write("Origin: ");
+                    Position origin = Screen.GetChessPosition().ToPosition();
+                    Console.Write("Destination: ");
+                    Position destination = Screen.GetChessPosition().ToPosition();
+
+                    chessMatch.PerformMoviment(origin, destination);
+               }
             }
              catch(BoardException e)
             {

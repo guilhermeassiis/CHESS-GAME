@@ -1,4 +1,6 @@
 using ChessGame.board;
+using ChessGame.board.Chess;
+
 namespace ChessGame
 {
     public class Screen
@@ -24,6 +26,16 @@ namespace ChessGame
             }
             Console.WriteLine("  a b c d e f g h");
         }
+
+        public static ChessPosition GetChessPosition()
+        {
+            string position = Console.ReadLine();
+            char column = position[0];
+            int line = int.Parse(position[1] + "");
+            return new ChessPosition(column, line);
+            
+        }
+
         public static void PrintPiece(Piece piece)
         {
             if(piece.color == Colors.White)

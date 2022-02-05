@@ -38,6 +38,17 @@ namespace ChessGame.board
             p.position = position;
             
         }
+        public Piece RemovePiece(Position position)
+        {
+            if (ReturnPiece(position) == null)
+            {
+                return null;
+            }
+            Piece aux = ReturnPiece(position);
+            aux.position = null; 
+            pieces[position.line, position.column] = null;
+            return aux;
+        }
         public bool ValidPosition(Position position)
         {
             if(position.line < 0 || position.line >= lines || position.column < 0 || position.column >= columns)
