@@ -1,6 +1,6 @@
 namespace ChessGame.board
 {
-    public class Piece
+    public abstract class Piece
     {
         public Position position { get; set; }  
         public Colors color { get; protected set; }
@@ -14,9 +14,15 @@ namespace ChessGame.board
             this.board = board;
             this.numberOfMoves = 0;
         }
-        public void IncrementNumberOfMoves()
+        protected bool CanMove(Position position)
+        {
+            Piece p = board.ReturnPiece(position);
+            return p == null || p.color != this.color;
+        }
+        public void IncrementNumberOfMoves()    
         {
             numberOfMoves++;
         }
+        public abstract bool[,] PossibleMovies();
     }
 }
