@@ -1,18 +1,19 @@
 using ChessGame.board;
+using ChessGame.board.Exceptions;
 
 namespace ChessGame.board.Chess
 {
     public class ChessMatch
     {
         public Board board { get; private set; } 
-        private int turn;
-        private Colors currentPayerColor;
+        public int turn { get; private set; }
+        public Colors currentPayerColor { get; private set; }
         public bool closed { get; private set; }
 
         public ChessMatch()
         {
             board = new Board(8, 8);
-            turn = 0;
+            turn = 1;
             currentPayerColor = Colors.White;
             closed = false; 
             PutPieces();
@@ -26,10 +27,49 @@ namespace ChessGame.board.Chess
                 p.IncrementNumberOfMoves();
                 Piece capturedPiece = board.RemovePiece(destination);
                 board.MakeAPiece(p, destination);
-
             }
-            
         }
+        public void MakeMove (Position origin, Position destination)
+        {
+            PerformMoviment(origin, destination);
+            turn++;
+            ChangePlayer();
+        }
+        public void ValidateOriginPosition(Position position)
+        {
+            if(board.ReturnPiece(position) == null)
+            {
+                throw new BoardException("Don't exists a piece in this location.");
+            }
+            if(currentPayerColor != board.ReturnPiece(position).color)
+            {
+                throw new BoardException("The origin piece is not your's. ");
+            }
+            if(board.ReturnPiece(position).ThereArePossibleMoviments())
+            {
+                throw new BoardException("There is not possibles moviments in this location.");
+            }   
+        }
+        public void ValidateDestinationPosition(Position origin, Position destination)
+        {
+            if (!board.ReturnPiece(origin).CanMoveTo(destination))
+            {
+                throw new BoardException("Destination position is invalid."); 
+            }
+        }
+        private void ChangePlayer()
+        {
+            
+            if (currentPayerColor == Colors.White)
+            {
+                currentPayerColor = Colors.Black;
+            }
+            else
+            {
+                currentPayerColor = Colors.White;
+            }
+        }
+
         private void PutPieces()
         {
             board.MakeAPiece(new Tower(Colors.White, board), new ChessPosition('c', 1).ToPosition());

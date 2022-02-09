@@ -23,6 +23,25 @@ namespace ChessGame.board
         {
             numberOfMoves++;
         }
+        public bool ThereArePossibleMoviments()
+        {
+            bool[,] matrix = PossibleMovies();
+            for (int i = 0; i < board.lines; i++)
+            {
+                for (int j = 0; j < board.columns; j++)
+                {
+                    if(matrix[i, j])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public bool CanMoveTo(Position position)
+        {
+            return PossibleMovies()[position.line, position.column];
+        }
         public abstract bool[,] PossibleMovies();
     }
 }

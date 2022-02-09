@@ -14,22 +14,34 @@ namespace ChessGame
                
                while (!chessMatch.closed)
                {
-                    Console.Clear();
-                    Screen.PrintBoardLines(chessMatch.board);
+                    try
+                    {
+                        Console.Clear();
+                        Screen.PrintBoardLines(chessMatch.board);
+                        Console.WriteLine();
+                        Console.WriteLine($"Turn: {chessMatch.turn}");
+                        Console.WriteLine($"Waiting move: {chessMatch.currentPayerColor} piece");
 
-                    Console.WriteLine();
-                    Console.Write("Origin: ");
-                    Position origin = Screen.GetChessPosition().ToPosition();
-                    bool[,] possiblePositions = chessMatch.board.ReturnPiece(origin).PossibleMovies();
-                    
-                    Console.Clear();
-                    Screen.PrintBoardLines(chessMatch.board, possiblePositions);
-                    
-                    Console.WriteLine();
-                    Console.Write("Destination: ");
-                    Position destination = Screen.GetChessPosition().ToPosition();
+                        Console.WriteLine();
+                        Console.Write("Origin: ");
+                        Position origin = Screen.GetChessPosition().ToPosition();
+                        bool[,] possiblePositions = chessMatch.board.ReturnPiece(origin).PossibleMovies();
+                        
+                        Console.Clear();
+                        Screen.PrintBoardLines(chessMatch.board, possiblePositions);
+                        
+                        Console.WriteLine();
+                        Console.Write("Destination: ");
+                        Position destination = Screen.GetChessPosition().ToPosition();
+                        chessMatch.ValidateDestinationPosition(origin, destination);
 
-                    chessMatch.PerformMoviment(origin, destination);
+                        chessMatch.MakeMove(origin, destination);
+                    }
+                    catch (BoardException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.ReadLine();
+                    }
                }
             }
              catch(BoardException e)
