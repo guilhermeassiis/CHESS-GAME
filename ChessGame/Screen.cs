@@ -5,6 +5,41 @@ namespace ChessGame
 {
     public class Screen
     {
+        public static void PrintMatch(ChessMatch match)
+        {
+            PrintBoardLines(match.board);
+            Console.WriteLine();
+            PrintCapturedPieces(match);
+            Console.WriteLine();
+            Console.WriteLine($"Turn1S: {match.turn}");
+            Console.WriteLine($"Waiting move: {match.currentPayerColor} piece");
+            if (match.xeque)
+            {
+                Console.WriteLine("CHECK!");
+            }
+        }
+        public static void PrintCapturedPieces(ChessMatch match)
+        {
+            Console.WriteLine("Captured Pieces");
+            Console.WriteLine("White: ");
+            PrintHash(match.CapturedPiecesColor(Colors.White));
+            Console.WriteLine();
+            Console.WriteLine("Black: ");
+            PrintHash(match.CapturedPiecesColor(Colors.Black));
+            Console.WriteLine();
+        
+        }
+
+        public static void PrintHash(HashSet<Piece> hash)
+        {
+            Console.Write(" { ");
+            foreach(Piece p in hash)
+            {
+                Console.Write(p + " ");
+            }
+            Console.Write(" } ");
+        }
+
         public static void PrintBoardLines(Board board)
         {
             for (int i=0; i<board.lines; i++)

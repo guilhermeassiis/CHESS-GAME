@@ -1,4 +1,4 @@
-using ChessGame.board;
+using System.Collections.Generic;
 using ChessGame.board.Exceptions;
 
 namespace ChessGame.board.Chess
@@ -9,6 +9,10 @@ namespace ChessGame.board.Chess
         public int turn { get; private set; }
         public Colors currentPayerColor { get; private set; }
         public bool closed { get; private set; }
+        private HashSet<Piece> pieces;
+        private HashSet<Piece> captured;
+        public bool xeque { get; private set; }
+
 
         public ChessMatch()
         {
@@ -16,25 +20,57 @@ namespace ChessGame.board.Chess
             turn = 1;
             currentPayerColor = Colors.White;
             closed = false; 
+            pieces = new HashSet<Piece>();
+            captured = new HashSet<Piece>();
             PutPieces();
         }
 
-        public void PerformMoviment(Position origin, Position destination)
+        public Piece PerformMoviment(Position origin, Position destination)
         {
             Piece p = board.RemovePiece(origin);
-            if (p != null)
+            p.IncrementNumberOfMoves();
+            Piece capturedPiece = board.RemovePiece(destination);
+            board.MakeAPiece(p, destination);
+            if (capturedPiece != null)
             {
-                p.IncrementNumberOfMoves();
-                Piece capturedPiece = board.RemovePiece(destination);
-                board.MakeAPiece(p, destination);
+                captured.Add(capturedPiece);
             }
+            return capturedPiece;
         }
         public void MakeMove (Position origin, Position destination)
         {
-            PerformMoviment(origin, destination);
+            Piece capturedPiece = PerformMoviment(origin, destination);
+            
+            if (ItsInCheck(currentPayerColor))
+            {
+                UndoMoviment(origin, destination, capturedPiece);
+                throw new BoardException("You cant put yourself in check");
+            }
+            if (ItsInCheck(AdversaryColor(currentPayerColor)))
+            {
+                xeque = true;
+            }
+            else
+            {
+                xeque = false;
+            }
+
             turn++;
             ChangePlayer();
+
         }
+        public void UndoMoviment(Position origin, Position destination, Piece capturedPiece)
+        {
+            Piece p = board.RemovePiece(destination);
+            p.DecrementNumberOfMoves();
+            if (capturedPiece != null)
+            {
+                board.MakeAPiece(capturedPiece, destination);
+                captured.Remove(capturedPiece);
+            }
+            board.MakeAPiece(p, origin);
+        }
+
         public void ValidateOriginPosition(Position position)
         {
             if(board.ReturnPiece(position) == null)
@@ -69,22 +105,87 @@ namespace ChessGame.board.Chess
                 currentPayerColor = Colors.White;
             }
         }
-
+        public HashSet<Piece> CapturedPiecesColor(Colors color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece x in captured)
+            {
+                if (x.color == color)
+                {
+                    aux.Add(x);
+                }
+            }
+            return aux;
+        }
+        private Colors AdversaryColor(Colors color)
+        {
+            if(color == Colors.White)
+            {
+                return Colors.Black;
+            }
+            return Colors.White;
+        }
+        private Piece _King(Colors color)
+        {
+            foreach (Piece x in pieces)
+            {
+                if (x is King)
+                {
+                    return x;
+                }
+            }
+            return null;
+        }
+        public bool ItsInCheck(Colors color)
+        {
+            Piece K = _King(color);
+            if (K == null)
+            {
+                throw new BoardException("The king dont exists.");
+            }
+            foreach (Piece x in PiecesInGame(AdversaryColor(color)))
+            {
+                bool[,] matrix = x.PossibleMovies();
+                if (matrix[K.position.line, K.position.column])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public HashSet<Piece> PiecesInGame(Colors color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece x in captured)
+            {
+                if (x.color == color)
+                {
+                    aux.Add(x);
+                }
+            }
+            aux.ExceptWith(CapturedPiecesColor(color));
+            return aux;
+        }
+        public void PutANewPiece(char column, int line, Piece piece)
+        {
+            board.MakeAPiece(piece, new ChessPosition(column, line).ToPosition());
+            pieces.Add(piece);
+        }
         private void PutPieces()
         {
-            board.MakeAPiece(new Tower(Colors.White, board), new ChessPosition('c', 1).ToPosition());
-            board.MakeAPiece(new Tower(Colors.White, board), new ChessPosition('c', 2).ToPosition());
-            board.MakeAPiece(new Tower(Colors.White, board), new ChessPosition('d', 2).ToPosition());
-            board.MakeAPiece(new Tower(Colors.White, board), new ChessPosition('e', 2).ToPosition());
-            board.MakeAPiece(new Tower(Colors.White, board), new ChessPosition('e', 1).ToPosition());
-            board.MakeAPiece(new King(Colors.White, board), new ChessPosition('d', 1).ToPosition());
+            PutANewPiece('c', 1, new Tower(Colors.White, board));
+            PutANewPiece('c', 2, new Tower(Colors.White, board));
+            PutANewPiece('d', 2, new Tower(Colors.White, board));
+            PutANewPiece('e', 1, new Tower(Colors.White, board));
+            PutANewPiece('e', 2, new Tower(Colors.White, board));
+            PutANewPiece('d', 1, new King(Colors.White, board));
 
-            board.MakeAPiece(new Tower(Colors.Black, board), new ChessPosition('c', 7).ToPosition());
-            board.MakeAPiece(new Tower(Colors.Black, board), new ChessPosition('c', 8).ToPosition());
-            board.MakeAPiece(new Tower(Colors.Black, board), new ChessPosition('d', 7).ToPosition());
-            board.MakeAPiece(new Tower(Colors.Black, board), new ChessPosition('e', 7).ToPosition());
-            board.MakeAPiece(new Tower(Colors.Black, board), new ChessPosition('e', 8).ToPosition());
-            board.MakeAPiece(new King(Colors.Black, board), new ChessPosition('d', 8).ToPosition());
+            PutANewPiece('c', 7, new Tower(Colors.Black, board));
+            PutANewPiece('c', 8, new Tower(Colors.Black, board));
+            PutANewPiece('d', 7, new Tower(Colors.Black, board));
+            PutANewPiece('e', 7, new Tower(Colors.Black, board));
+            PutANewPiece('e', 8, new Tower(Colors.Black, board));
+            PutANewPiece('d', 8, new King(Colors.Black, board));
         }
     }
 }

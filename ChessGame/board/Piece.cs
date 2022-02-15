@@ -23,6 +23,10 @@ namespace ChessGame.board
         {
             numberOfMoves++;
         }
+        public void DecrementNumberOfMoves()    
+        {
+            numberOfMoves--;
+        }
         public bool ThereArePossibleMoviments()
         {
             bool[,] matrix = PossibleMovies();
