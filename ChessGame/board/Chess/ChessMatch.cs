@@ -95,7 +95,6 @@ namespace ChessGame.board.Chess
         }
         private void ChangePlayer()
         {
-            
             if (currentPayerColor == Colors.White)
             {
                 currentPayerColor = Colors.Black;
@@ -125,9 +124,9 @@ namespace ChessGame.board.Chess
             }
             return Colors.White;
         }
-        private Piece _King(Colors color)
+        private Piece King(Colors color)
         {
-            foreach (Piece x in pieces)
+            foreach (Piece x in PiecesInGame(color))
             {
                 if (x is King)
                 {
@@ -138,7 +137,7 @@ namespace ChessGame.board.Chess
         }
         public bool ItsInCheck(Colors color)
         {
-            Piece K = _King(color);
+            Piece K = King(color);
             if (K == null)
             {
                 throw new BoardException("The king dont exists.");
@@ -156,7 +155,7 @@ namespace ChessGame.board.Chess
         public HashSet<Piece> PiecesInGame(Colors color)
         {
             HashSet<Piece> aux = new HashSet<Piece>();
-            foreach (Piece x in captured)
+            foreach (Piece x in pieces)
             {
                 if (x.color == color)
                 {

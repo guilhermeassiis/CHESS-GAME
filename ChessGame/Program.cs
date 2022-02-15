@@ -16,11 +16,8 @@ namespace ChessGame
                {
                     try
                     {
-                        Console.Clear();
-                        Screen.PrintBoardLines(chessMatch.board);
-                        Console.WriteLine();
-                        Console.WriteLine($"Turn: {chessMatch.turn}");
-                        Console.WriteLine($"Waiting move: {chessMatch.currentPayerColor} piece");
+                        System.Console.Clear();
+                        Screen.PrintMatch(chessMatch);
 
                         Console.WriteLine();
                         Console.Write("Origin: ");
