@@ -55,9 +55,15 @@ namespace ChessGame.board.Chess
                 xeque = false;
             }
 
-            turn++;
-            ChangePlayer();
-
+            if(CheckMate(AdversaryColor(currentPayerColor)))
+            {
+                closed = true;
+            }
+            else
+            {
+                turn++;
+                ChangePlayer();
+            }
         }
         public void UndoMoviment(Position origin, Position destination, Piece capturedPiece)
         {
@@ -148,6 +154,36 @@ namespace ChessGame.board.Chess
                 if (matrix[K.position.line, K.position.column])
                 {
                     return true;
+                }
+            }
+            return false;
+        }
+        public bool CheckMate(Colors color)
+        {
+            if(ItsInCheck(color))
+            {
+                return false;
+            }
+            foreach (Piece x in PiecesInGame(color))
+            {
+                bool[,] matrix = x.PossibleMovies();
+                for (int i = 0; i < board.lines; i++)
+                {
+                    for(int j = 0; j < board.columns; j++)
+                    {
+                        if (matrix[i, j])
+                        {
+                            Position origin = x.position;
+                            Position destination = new Position(i, j);
+                            Piece capturedPiece = PerformMoviment(origin, destination);
+                            bool checkTest = ItsInCheck(color);
+                            UndoMoviment(origin, destination, capturedPiece);
+                            if (!checkTest)
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
             }
             return false;
