@@ -1,19 +1,23 @@
-using ChessGame.board;
 namespace ChessGame.board.Chess
 {
-    public class Tower : Piece
+    public class Bishop : Piece
     {
-         public Tower(Colors color, Board board) : base(color, board)
+        public Bishop(Colors color, Board board) : base(color, board)
         {
+        }
+
+        public override string ToString()
+        {
+            return  "B";
         }
 
         public override bool[,] PossibleMovies()
         {
             bool[,] matrix = new bool[board.lines, board.columns];
-            // Only instance one position
             Position pos = new Position(0, 0);
-            // vertical moves
-            pos.DefineValues(position.line - 1, position.column);
+            
+            // NW
+            pos.DefineValues(position.line - 1, position.column - 1);
             while(board.ValidPosition(pos) && CanMove(pos))
             {
                 matrix[pos.line, pos.column] = true;
@@ -21,9 +25,10 @@ namespace ChessGame.board.Chess
                 {
                     break;
                 }
-                pos.line = pos.line - 1;
+                pos.DefineValues(pos.line - 1, pos.column - 1);
             }
-            pos.DefineValues(position.line + 1 , position.column);
+            // NE
+            pos.DefineValues(position.line - 1, position.column + 1);
             while(board.ValidPosition(pos) && CanMove(pos))
             {
                 matrix[pos.line, pos.column] = true;
@@ -31,10 +36,10 @@ namespace ChessGame.board.Chess
                 {
                     break;
                 }
-                pos.line = pos.line + 1;
+                pos.DefineValues(pos.line - 1, pos.column + 1);
             }
-            // horizontal moves
-            pos.DefineValues(position.line , position.column + 1);
+            // SE
+            pos.DefineValues(position.line + 1, position.column + 1);
             while(board.ValidPosition(pos) && CanMove(pos))
             {
                 matrix[pos.line, pos.column] = true;
@@ -42,9 +47,10 @@ namespace ChessGame.board.Chess
                 {
                     break;
                 }
-                pos.column = pos.column + 1;
+                pos.DefineValues(pos.line + 1, pos.column + 1);
             }
-            pos.DefineValues(position.line , position.column - 1);
+            // SO
+            pos.DefineValues(position.line + 1, position.column - 1);
             while(board.ValidPosition(pos) && CanMove(pos))
             {
                 matrix[pos.line, pos.column] = true;
@@ -52,14 +58,10 @@ namespace ChessGame.board.Chess
                 {
                     break;
                 }
-                pos.column = pos.column - 1;
+                pos.DefineValues(pos.line + 1, pos.column - 1);
             }
+            
             return matrix;
-        }
-
-        public override string ToString()
-        {
-            return "T";
         }
     }
 }

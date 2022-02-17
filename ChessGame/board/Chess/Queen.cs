@@ -1,17 +1,60 @@
-using ChessGame.board;
 namespace ChessGame.board.Chess
 {
-    public class Tower : Piece
+    public class Queen : Piece
     {
-         public Tower(Colors color, Board board) : base(color, board)
+        public Queen(Colors color, Board board) : base(color, board)
         {
         }
 
         public override bool[,] PossibleMovies()
         {
             bool[,] matrix = new bool[board.lines, board.columns];
-            // Only instance one position
             Position pos = new Position(0, 0);
+            
+            // NW
+            pos.DefineValues(position.line - 1, position.column - 1);
+            while(board.ValidPosition(pos) && CanMove(pos))
+            {
+                matrix[pos.line, pos.column] = true;
+                if (board.ReturnPiece(pos) != null && board.ReturnPiece(pos).color != this.color)
+                {
+                    break;
+                }
+                pos.DefineValues(pos.line - 1, pos.column - 1);
+            }
+            // NE
+            pos.DefineValues(position.line - 1, position.column + 1);
+            while(board.ValidPosition(pos) && CanMove(pos))
+            {
+                matrix[pos.line, pos.column] = true;
+                if (board.ReturnPiece(pos) != null && board.ReturnPiece(pos).color != this.color)
+                {
+                    break;
+                }
+                pos.DefineValues(pos.line - 1, pos.column + 1);
+            }
+            // SE
+            pos.DefineValues(position.line + 1, position.column + 1);
+            while(board.ValidPosition(pos) && CanMove(pos))
+            {
+                matrix[pos.line, pos.column] = true;
+                if (board.ReturnPiece(pos) != null && board.ReturnPiece(pos).color != this.color)
+                {
+                    break;
+                }
+                pos.DefineValues(pos.line + 1, pos.column + 1);
+            }
+            // SO
+            pos.DefineValues(position.line + 1, position.column - 1);
+            while(board.ValidPosition(pos) && CanMove(pos))
+            {
+                matrix[pos.line, pos.column] = true;
+                if (board.ReturnPiece(pos) != null && board.ReturnPiece(pos).color != this.color)
+                {
+                    break;
+                }
+                pos.DefineValues(pos.line + 1, pos.column - 1);
+            }
             // vertical moves
             pos.DefineValues(position.line - 1, position.column);
             while(board.ValidPosition(pos) && CanMove(pos))
@@ -59,7 +102,7 @@ namespace ChessGame.board.Chess
 
         public override string ToString()
         {
-            return "T";
+            return "Q";
         }
     }
 }
