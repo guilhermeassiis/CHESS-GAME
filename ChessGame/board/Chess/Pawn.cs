@@ -2,8 +2,10 @@ namespace ChessGame.board.Chess
 {
     public class Pawn : Piece
     {
-        public Pawn(Colors color, Board board) : base(color, board)
+        private ChessMatch _match;
+        public Pawn(Colors color, Board board, ChessMatch match) : base(color, board)
         {
+            _match = match;
         }
 
         private bool ExistsEnemy(Position position)
@@ -42,6 +44,22 @@ namespace ChessGame.board.Chess
                 {
                     matrix[pos.line, pos.column] = true;
                 }
+
+                // #EspecialMoviment
+                // EnPassant
+                if (position.line == 3)
+                {
+                    Position left = new Position(position.line, position.column - 1);
+                    if (board.ValidPosition(left) && ExistsEnemy(left) && board.ReturnPiece(left) == _match.EnPassant)
+                    {
+                        matrix[left.line - 1, left.column] = true;
+                    }
+                    Position right = new Position(position.line, position.column + 1);
+                    if (board.ValidPosition(right) && ExistsEnemy(right) && board.ReturnPiece(right) == _match.EnPassant)
+                    {
+                        matrix[right.line - 1, right.column] = true;
+                    }
+                }
             }
             else
             {
@@ -65,9 +83,25 @@ namespace ChessGame.board.Chess
                 {
                     matrix[pos.line, pos.column] = true;
                 }
+                // #EspecialMoviment
+                // EnPassant
+                if (position.line == 4)
+                {
+                    Position left = new Position(position.line, position.column - 1);
+                    if (board.ValidPosition(left) && ExistsEnemy(left) && board.ReturnPiece(left) == _match.EnPassant)
+                    {
+                        matrix[left.line + 1, left.column] = true;
+                    }
+                    Position right = new Position(position.line, position.column + 1);
+                    if (board.ValidPosition(right) && ExistsEnemy(right) && board.ReturnPiece(right) == _match.EnPassant)
+                    {
+                        matrix[right.line + 1, right.column] = true;
+                    }
+                }
             }
             return matrix;
         }
+
 
         public override string ToString()
         {
