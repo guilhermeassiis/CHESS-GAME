@@ -87,6 +87,20 @@ namespace ChessGame.board.Chess
                 UndoMoviment(origin, destination, capturedPiece);
                 throw new BoardException("You cant put yourself in check");
             }
+
+            Piece p = board.ReturnPiece(destination);
+            // #EspecialMoviment
+            // Promotion
+            if (p is Pawn)
+            {
+                if(p.color == Colors.White && destination.line == 0 || p.color == Colors.Black && destination.line == 8)
+                {
+                    p = board.RemovePiece(destination);
+                    pieces.Remove(p);
+                    Piece queen = new Queen(p.color, board);
+                    board.MakeAPiece(queen, destination);
+                }
+            }
             if (ItsInCheck(AdversaryColor(currentPayerColor)))
             {
                 xeque = true;
@@ -105,8 +119,6 @@ namespace ChessGame.board.Chess
                 turn++;
                 ChangePlayer();
             }
-
-            Piece p = board.ReturnPiece(destination);
             // #EspecialMoviment
             // EnPassant
             if (p is Pawn && destination.line == origin.line - 2 || destination.line == origin.line + 2)
@@ -321,21 +333,21 @@ namespace ChessGame.board.Chess
             PutANewPiece('h', 2, new Pawn(Colors.White, board, this));
 
             PutANewPiece('a', 8, new Tower(Colors.Black, board));
-            PutANewPiece('h', 8, new Tower(Colors.Black, board));
-            PutANewPiece('g', 8, new Knight(Colors.Black, board));
-            PutANewPiece('b', 8, new Knight(Colors.Black, board));
-            PutANewPiece('f', 8, new Bishop(Colors.Black, board));
-            PutANewPiece('c', 8, new Bishop(Colors.Black, board));
-            PutANewPiece('d', 8, new Queen(Colors.Black, board));
-            PutANewPiece('e', 8, new King(Colors.Black, board, this));
-            PutANewPiece('a', 7, new Pawn(Colors.Black, board, this));
-            PutANewPiece('b', 7, new Pawn(Colors.Black, board, this));
-            PutANewPiece('c', 7, new Pawn(Colors.Black, board, this));
-            PutANewPiece('d', 7, new Pawn(Colors.Black, board, this));
-            PutANewPiece('e', 7, new Pawn(Colors.Black, board, this));
-            PutANewPiece('f', 7, new Pawn(Colors.Black, board, this));
-            PutANewPiece('g', 7, new Pawn(Colors.Black, board, this));
-            PutANewPiece('h', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('h', 8, new Tower(Colors.Black, board));
+            // PutANewPiece('g', 8, new Knight(Colors.Black, board));
+            // PutANewPiece('b', 8, new Knight(Colors.Black, board));
+            // PutANewPiece('f', 8, new Bishop(Colors.Black, board));
+            // PutANewPiece('c', 8, new Bishop(Colors.Black, board));
+            // PutANewPiece('d', 8, new Queen(Colors.Black, board));
+            // PutANewPiece('e', 8, new King(Colors.Black, board, this));
+            // PutANewPiece('a', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('b', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('c', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('d', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('e', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('f', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('g', 7, new Pawn(Colors.Black, board, this));
+            // PutANewPiece('h', 7, new Pawn(Colors.Black, board, this));
         }
     }
 }
